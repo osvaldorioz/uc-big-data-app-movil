@@ -1,0 +1,88 @@
+<html>
+<head>
+	<title>javascript-mobile-desktop-geolocation Demo With No Simulation</title>
+	<style>
+		.error { color: red;}
+		ul { display: none;}
+	</style>
+</head>	
+<body>
+	<h1>Servicio móvil de geolocalización </h1>
+	<h2>Resultados:</h2>
+	<p id="result">
+		<ul id="coordinates">
+			<li id="latitude"></li>
+			<li id="longitude"></li>
+		</ul>
+	</p>
+	<input type="button" value="Enviar" onclick="sendMessage();"/>
+	
+	<script src="js/geoPosition.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/geoPositionSimulator.js" type="text/javascript" charset="utf-8"></script>
+
+	<script src="js/jquery.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		var latitude;
+		var longitude;
+		
+		if(geoPosition.init()){
+			geoPosition.getCurrentPosition(success_callback,error_callback,{enableHighAccuracy:true});
+		} else {
+			document.getElementById('result').innerHTML = '<span class="error">Functionality not available</span>';
+		}
+
+		function success_callback(p) {
+			latitude = parseFloat( p.coords.latitude ); //.toFixed(2);
+			longitude = parseFloat( p.coords.longitude ).toFixed(7);
+			document.getElementById('latitude').innerHTML = '<span class="information">Latitud:</span>' + latitude;
+			document.getElementById('longitude').innerHTML = '<span class="information">Longitud::</span>' + longitude;		
+			document.getElementById('coordinates').style.display = 'block';
+		}
+		
+		function error_callback(p) {
+			document.getElementById('result').innerHTML = '<span class="error">' + p.message + '</span>';			
+		}		
+		
+		function sendMessage() {
+		    var url = "http://192.168.1.72:8080/RESTfulExample/rest/geoloc/100/" + latitude +"/" + longitude;
+
+			alert(url);
+			
+			var xmlhttp = new XMLHttpRequest();
+			xmlhttp.onreadystatechange = callbackFunction(xmlhttp);
+			xmlhttp.open("POST", url, true);
+			xmlhttp.setRequestHeader("Content-Type", "application/json");
+			//xmlhttp.setRequestHeader('Authorization', 'Basic ' + window.btoa('apiusername:apiuserpassword')); //in prod, you should encrypt user name and password and provide encrypted keys here instead 
+			xmlhttp.onreadystatechange = callbackFunction(xmlhttp);
+			xmlhttp.send();
+			alert(xmlhttp.responseText);
+		}
+
+		function callbackFunction(xmlhttp) {
+			//alert(xmlhttp.responseXML);
+		}
+	/*		
+			var xmlhttp = new XMLHttpRequest();
+
+			
+            alert(url);
+			xmlhttp.open("GET", url); //, true, "", "");
+
+			xmlhttp.setRequestHeader("Content-Type", "application/json");
+			xmlhttp.setRequestHeader("accept", "application/json");
+
+			var payload = '';      
+
+			xmlhttp.send(); //JSON.parse(payload));
+
+			if (this.status == 200)
+				alert("Va bien");
+			else 
+				alert("No va bien");           */                 
+		
+
+	
+	
+</script>
+</body>
+</html>
